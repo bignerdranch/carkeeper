@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nickname: MyString
+  make: MyString
+  model: MyString
+  rgb_color: 1
+  year: 1
+
+two:
+  nickname: MyString
+  make: MyString
+  model: MyString
+  rgb_color: 1
+  year: 1
