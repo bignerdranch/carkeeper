@@ -13,6 +13,9 @@
 #import "BNRCar.h"
 
 @interface BNRMasterViewController ()
+
+@property (nonatomic) BOOL isDataLoaded;
+
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 @end
 
@@ -36,6 +39,72 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
     self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (BNRDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if (!self.isDataLoaded) {
+        // load the data
+        NSURL * carsURL = [NSURL URLWithString:@"http://localhost:3000/cars.json"];
+        [[[NSURLSession sharedSession] dataTaskWithURL:carsURL
+                                    completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            self.isDataLoaded = YES;
+            NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse *)response;
+            if (urlResponse && [urlResponse statusCode] == 200) {
+                NSError *jsonError;
+                NSArray *carDicts = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
+                if (carDicts) {
+                    // parse the dictionaries into BNRCar objects
+                    NSManagedObjectContext *mainContext = [self.fetchedResultsController managedObjectContext];
+                    NSManagedObjectContext *childContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+                    childContext.parentContext = mainContext;
+                    
+                    // listen for saves to save the main context
+                    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:NSManagedObjectContextDidSaveNotification
+                                                                                    object:childContext
+                                                                                     queue:[NSOperationQueue mainQueue]
+                                                                                usingBlock:^(NSNotification *note) {
+                        NSError *saveError;
+                        BOOL success = [mainContext save:&saveError];
+                        if (!success) {
+                            NSLog(@"Error saving main context: %@", saveError);
+                        }
+                    }];
+                    
+                    [childContext performBlockAndWait:^{
+                        for (NSDictionary *carDict in carDicts) {
+                            BNRCar *car = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([BNRCar class]) inManagedObjectContext:childContext];
+                            car.make = carDict[@"make"];
+                            car.model = carDict[@"model"];
+                            car.year = [carDict[@"year"] integerValue];
+                            car.nickname = carDict[@"nickname"];
+                            car.rgbColor = [carDict[@"rgb_color"] integerValue];
+                        }
+                        
+                        NSError *saveError;
+                        BOOL success = [childContext save:&saveError];
+                        if (!success) {
+                            NSLog(@"Error saving cars to store: %@", saveError);
+                        }
+                    }];
+                    
+                    [[NSNotificationCenter defaultCenter] removeObserver:observer];
+                    
+                    
+                } else {
+                    NSLog(@"Error parsing JSON: %@", jsonError);
+                }
+            } else {
+                if (urlResponse) {
+                    NSLog(@"Bad response when retrieving cars: %@", urlResponse);
+                } else {
+                    NSLog(@"Error retrieving cars: %@", error);
+                }
+            }
+        }] resume];
+    }
 }
 
 - (void)didReceiveMemoryWarning
