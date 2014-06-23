@@ -57,9 +57,8 @@
                 NSArray *carDicts = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
                 if (carDicts) {
                     // parse the dictionaries into BNRCar objects
-                    NSManagedObjectContext *mainContext = [self.fetchedResultsController managedObjectContext];
                     NSManagedObjectContext *childContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-                    childContext.parentContext = mainContext;
+                    childContext.parentContext = self.managedObjectContext;
                     
                     // listen for saves to save the main context
                     id observer = [[NSNotificationCenter defaultCenter] addObserverForName:NSManagedObjectContextDidSaveNotification
@@ -67,7 +66,7 @@
                                                                                      queue:[NSOperationQueue mainQueue]
                                                                                 usingBlock:^(NSNotification *note) {
                         NSError *saveError;
-                        BOOL success = [mainContext save:&saveError];
+                        BOOL success = [self.managedObjectContext save:&saveError];
                         if (!success) {
                             NSLog(@"Error saving main context: %@", saveError);
                         }
