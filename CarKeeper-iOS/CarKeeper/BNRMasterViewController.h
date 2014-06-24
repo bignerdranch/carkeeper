@@ -7,16 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
 
 @class BNRDetailViewController;
 
-#import <CoreData/CoreData.h>
+#import "BNRCarKeeperStore.h"
 
 @interface BNRMasterViewController : UITableViewController <NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) BNRDetailViewController *detailViewController;
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
-@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) BNRCarKeeperStore *store;
 
 @end

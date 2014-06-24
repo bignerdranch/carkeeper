@@ -10,10 +10,13 @@
 
 #import "BNRMasterViewController.h"
 #import "BNRCarKeeperCoreDataStack.h"
+#import "BNRCarKeeperStore.h"
 
 @interface BNRAppDelegate ()
 
 @property (nonatomic, strong) BNRCarKeeperCoreDataStack *coreDataStack;
+@property (nonatomic, strong) BNRCarKeeperStore *store;
+
 
 @end
 
@@ -24,6 +27,7 @@
 {
     // Override point for customization after application launch.
     self.coreDataStack = [BNRCarKeeperCoreDataStack new];
+    self.store = [[BNRCarKeeperStore alloc] initWithCoreDataStack:self.coreDataStack];
     
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
@@ -32,11 +36,11 @@
         
         UINavigationController *masterNavigationController = splitViewController.viewControllers[0];
         BNRMasterViewController *controller = (BNRMasterViewController *)masterNavigationController.topViewController;
-        controller.managedObjectContext = self.coreDataStack.managedObjectContext;
+        controller.store = self.store;
     } else {
         UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
         BNRMasterViewController *controller = (BNRMasterViewController *)navigationController.topViewController;
-        controller.managedObjectContext = self.coreDataStack.managedObjectContext;
+        controller.store = self.store;
     }
     return YES;
 }
