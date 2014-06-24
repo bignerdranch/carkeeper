@@ -47,63 +47,13 @@
     [super viewWillAppear:animated];
     
     if (!self.isDataLoaded) {
-        // load the data
-        NSURL * carsURL = [NSURL URLWithString:@"http://localhost:3000/cars.json"];
-        [[[NSURLSession sharedSession] dataTaskWithURL:carsURL
-                                    completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-            self.isDataLoaded = YES;
-            NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse *)response;
-            if (urlResponse && [urlResponse statusCode] == 200) {
-                NSError *jsonError;
-                NSArray *carDicts = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
-                if (carDicts) {
-                    // parse the dictionaries into BNRCar objects
-                    NSManagedObjectContext *childContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-                    childContext.parentContext = self.managedObjectContext;
-                    
-                    // listen for saves to save the main context
-                    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:NSManagedObjectContextDidSaveNotification
-                                                                                    object:childContext
-                                                                                     queue:[NSOperationQueue mainQueue]
-                                                                                usingBlock:^(NSNotification *note) {
-                        NSError *saveError;
-                        BOOL success = [self.managedObjectContext save:&saveError];
-                        if (!success) {
-                            NSLog(@"Error saving main context: %@", saveError);
-                        }
-                    }];
-                    
-                    [childContext performBlockAndWait:^{
-                        for (NSDictionary *carDict in carDicts) {
-                            BNRCar *car = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([BNRCar class]) inManagedObjectContext:childContext];
-                            car.make = carDict[@"make"];
-                            car.model = carDict[@"model"];
-                            car.year = [carDict[@"year"] integerValue];
-                            car.nickname = carDict[@"nickname"];
-                            car.rgbColor = [carDict[@"rgb_color"] integerValue];
-                        }
-                        
-                        NSError *saveError;
-                        BOOL success = [childContext save:&saveError];
-                        if (!success) {
-                            NSLog(@"Error saving cars to store: %@", saveError);
-                        }
-                    }];
-                    
-                    [[NSNotificationCenter defaultCenter] removeObserver:observer];
-                    
-                    
-                } else {
-                    NSLog(@"Error parsing JSON: %@", jsonError);
-                }
+        [self.store loadCarsWithCompletion:^(BOOL success, NSError *error) {
+            if (success) {
+                self.isDataLoaded = YES;
             } else {
-                if (urlResponse) {
-                    NSLog(@"Bad response when retrieving cars: %@", urlResponse);
-                } else {
-                    NSLog(@"Error retrieving cars: %@", error);
-                }
+                NSLog(@"Error loading cars: %@", error);
             }
-        }] resume];
+        }];
     }
 }
 
@@ -208,33 +158,13 @@
         return _fetchedResultsController;
     }
     
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"BNRCar" inManagedObjectContext:self.managedObjectContext];
-    [fetchRequest setEntity:entity];
-    
-    // Set the batch size to a suitable number.
-    [fetchRequest setFetchBatchSize:20];
-    
-    // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"year" ascending:NO];
-    NSArray *sortDescriptors = @[sortDescriptor];
-    
-    [fetchRequest setSortDescriptors:sortDescriptors];
-    
-    // Edit the section name key path and cache name if appropriate.
-    // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"Master"];
-    aFetchedResultsController.delegate = self;
-    self.fetchedResultsController = aFetchedResultsController;
-    
-	NSError *error = nil;
-	if (![self.fetchedResultsController performFetch:&error]) {
-	     // Replace this implementation with code to handle the error appropriately.
-	     // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-	    NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-	    abort();
-	}
+    NSError *error;
+    self.fetchedResultsController = [self.store fetchCars:&error];
+    if (_fetchedResultsController) {
+        _fetchedResultsController.delegate = self;
+    } else {
+        NSLog(@"Error fetching cars: %@", error);
+    }
     
     return _fetchedResultsController;
 }    
