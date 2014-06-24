@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		692FD16A1A2FED3B009A06E4 /* BNRCarPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 692FD1691A2FED3B009A06E4 /* BNRCarPresenter.m */; };
 		692FD16C1A2FEDF2009A06E4 /* BNRCarPresenterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 692FD16B1A2FEDF2009A06E4 /* BNRCarPresenterTests.m */; };
+		69C5CB38195931680007D392 /* BNRCarKeeperCoreDataStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C5CB37195931680007D392 /* BNRCarKeeperCoreDataStack.m */; };
 		69EBBD3619557B6D00A1D2FA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EBBD3519557B6D00A1D2FA /* Foundation.framework */; };
 		69EBBD3819557B6D00A1D2FA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EBBD3719557B6D00A1D2FA /* CoreGraphics.framework */; };
 		69EBBD3A19557B6D00A1D2FA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EBBD3919557B6D00A1D2FA /* UIKit.framework */; };
@@ -44,6 +45,8 @@
 		692FD1681A2FED3B009A06E4 /* BNRCarPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNRCarPresenter.h; sourceTree = "<group>"; };
 		692FD1691A2FED3B009A06E4 /* BNRCarPresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNRCarPresenter.m; sourceTree = "<group>"; };
 		692FD16B1A2FEDF2009A06E4 /* BNRCarPresenterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNRCarPresenterTests.m; sourceTree = "<group>"; };
+		69C5CB36195931680007D392 /* BNRCarKeeperCoreDataStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNRCarKeeperCoreDataStack.h; sourceTree = "<group>"; };
+		69C5CB37195931680007D392 /* BNRCarKeeperCoreDataStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNRCarKeeperCoreDataStack.m; sourceTree = "<group>"; };
 		69EBBD3219557B6D00A1D2FA /* CarKeeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarKeeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69EBBD3519557B6D00A1D2FA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		69EBBD3719557B6D00A1D2FA /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -139,6 +142,8 @@
 				69EBBD5319557B6D00A1D2FA /* BNRMasterViewController.m */,
 				69EBBD5519557B6D00A1D2FA /* BNRDetailViewController.h */,
 				69EBBD5619557B6D00A1D2FA /* BNRDetailViewController.m */,
+				69C5CB36195931680007D392 /* BNRCarKeeperCoreDataStack.h */,
+				69C5CB37195931680007D392 /* BNRCarKeeperCoreDataStack.m */,
 				69EBBD5819557B6D00A1D2FA /* Images.xcassets */,
 				69EBBD4F19557B6D00A1D2FA /* CarKeeper.xcdatamodeld */,
 				69EBBD7619557E8C00A1D2FA /* BNRCar.h */,
@@ -282,6 +287,7 @@
 				69EBBD5419557B6D00A1D2FA /* BNRMasterViewController.m in Sources */,
 				69EBBD4419557B6D00A1D2FA /* main.m in Sources */,
 				69EBBD7819557E8C00A1D2FA /* BNRCar.m in Sources */,
+				69C5CB38195931680007D392 /* BNRCarKeeperCoreDataStack.m in Sources */,
 				69EBBD5719557B6D00A1D2FA /* BNRDetailViewController.m in Sources */,
 				69EBBD4819557B6D00A1D2FA /* BNRAppDelegate.m in Sources */,
 				692FD16A1A2FED3B009A06E4 /* BNRCarPresenter.m in Sources */,
