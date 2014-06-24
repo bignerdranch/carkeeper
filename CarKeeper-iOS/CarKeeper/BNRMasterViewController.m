@@ -301,12 +301,7 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     BNRCar *car = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    NSMutableString *carText = [[NSMutableString alloc] init];
-    [carText appendFormat:@"%d %@ %@", car.year, car.make, car.model];
-    if (car.nickname.length) {
-        [carText appendFormat:@", \"%@\"", car.nickname];
-    }
-    cell.textLabel.text = carText;
+    cell.textLabel.text = car.userDescription;
 }
 
 @end

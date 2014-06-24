@@ -38,13 +38,7 @@
 
     if (self.detailItem) {
         BNRCar *car = self.detailItem;
-        NSMutableString *carText = [[NSMutableString alloc] init];
-        [carText appendFormat:@"%d %@ %@", car.year, car.make, car.model];
-        if (car.nickname.length) {
-            [carText appendFormat:@", \"%@\"", car.nickname];
-        }
-
-        self.detailDescriptionLabel.text = carText;
+        self.detailDescriptionLabel.text = car.userDescription;
     }
 }
 

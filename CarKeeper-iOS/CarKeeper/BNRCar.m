@@ -17,4 +17,14 @@
 @dynamic rgbColor;
 @dynamic year;
 
+- (NSString *)userDescription
+{
+    NSMutableString *carText = [[NSMutableString alloc] init];
+    [carText appendFormat:@"%d %@ %@", self.year, self.make, self.model];
+    if (self.nickname.length) {
+        [carText appendFormat:@", \"%@\"", self.nickname];
+    }
+    return [carText copy];
+}
+
 @end
