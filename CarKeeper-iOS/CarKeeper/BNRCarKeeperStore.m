@@ -8,12 +8,8 @@
 
 #import "BNRCarKeeperStore.h"
 #import "BNRCar.h"
-
-static NSString * const BNRCarKeeperErrorDomain = @"BNRCarKeeperErrorDomain";
-
-typedef enum : NSUInteger {
-    BNRCarKeeperErrorCodeBadResponse,
-} BNRCarKeeperErrorCode;
+#import "BNRCarsResponseHandler.h"
+#import "BNRCarKeeperErrors.h"
 
 @interface BNRCarKeeperStore ()
 
@@ -63,50 +59,24 @@ typedef enum : NSUInteger {
     NSURL * carsURL = [NSURL URLWithString:@"http://localhost:3000/cars.json"];
     [[[NSURLSession sharedSession] dataTaskWithURL:carsURL
                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-     NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse *)response;
-     if (urlResponse && [urlResponse statusCode] == 200) {
-         NSError *jsonError;
-         NSArray *carDicts = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
-         if (carDicts) {
-             // parse the dictionaries into BNRCar objects, inserting them into a MOC
-             NSError *coreDataError;
-             BOOL success = [self.coreDataStack performBlockOnBackgroundContext:^BOOL(NSManagedObjectContext *backgroundMOC) {
-                 for (NSDictionary *carDict in carDicts) {
-                     [BNRCar insertCarInManagedObjectContext:backgroundMOC withDictionary:carDict];
-                 }
-                 
-                 return YES;
-             } error:&coreDataError];
-             
-             if (success) {
-                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                     completionBlock(YES, nil);
-                 }];
-             } else {
-                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                     completionBlock(NO, coreDataError);
-                 }];
-             }
-             
-         } else {
-             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                 completionBlock(NO, jsonError);
-             }];
-         }
-     } else {
-         if (urlResponse) {
-             NSLog(@"Bad response when retrieving cars: %@", urlResponse);
-             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                 completionBlock(NO, [NSError errorWithDomain:BNRCarKeeperErrorDomain
-                                                         code:BNRCarKeeperErrorCodeBadResponse
-                                                     userInfo:@{ @"Response" : urlResponse}]);
-             }];
-         } else {
-             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                 completionBlock(NO, error);
-             }];
-         }
-     }
+                                     if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                                         NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse *)response;
+                                         BNRCarsResponseHandler *handler = [[BNRCarsResponseHandler alloc] initWithCoreDataStack:self.coreDataStack];
+                                         NSError *handlerError;
+                                         BOOL success = [handler handleHTTPResponse:urlResponse withData:data error:&handlerError];
+                                         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                                             completionBlock(success, handlerError);
+                                         }];
+                                     } else {
+                                         if (response) {
+                                             NSLog(@"Bad response when retrieving cars: %@", response);
+                                             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                                                 completionBlock(NO, [NSError errorWithDomain:BNRCarKeeperErrorDomain
+                                                                                         code:BNRCarKeeperErrorCodeBadResponse
+                                                                                     userInfo:@{ @"Response" : response}]);
+                                             }];
+                                         }
+                                     }
     }] resume];
 }
 
