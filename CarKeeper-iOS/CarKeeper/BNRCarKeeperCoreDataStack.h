@@ -12,6 +12,9 @@
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
+- (BOOL)performBlockOnBackgroundContext:(BOOL (^)(NSManagedObjectContext *backgroundMOC))backgroundBlock
+                                  error:(NSError **)error;
+
 - (void)saveContext;
 
 @end

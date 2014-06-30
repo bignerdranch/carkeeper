@@ -68,25 +68,11 @@ typedef enum : NSUInteger {
          NSError *jsonError;
          NSArray *carDicts = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
          if (carDicts) {
-             // parse the dictionaries into BNRCar objects
-             NSManagedObjectContext *childContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-             childContext.parentContext = self.coreDataStack.managedObjectContext;
-             
-             // listen for saves to save the main context
-             id observer = [[NSNotificationCenter defaultCenter] addObserverForName:NSManagedObjectContextDidSaveNotification
-                                                                             object:childContext
-                                                                              queue:[NSOperationQueue mainQueue]
-                                                                         usingBlock:^(NSNotification *note) {
-                                                                             NSError *saveError;
-                                                                             BOOL success = [self.coreDataStack.managedObjectContext save:&saveError];
-                                                                             if (!success) {
-                                                                                 NSLog(@"Error saving main context: %@", saveError);
-                                                                             }
-                                                                         }];
-             
-             [childContext performBlockAndWait:^{
+             // parse the dictionaries into BNRCar objects, inserting them into a MOC
+             NSError *coreDataError;
+             BOOL success = [self.coreDataStack performBlockOnBackgroundContext:^BOOL(NSManagedObjectContext *backgroundMOC) {
                  for (NSDictionary *carDict in carDicts) {
-                     BNRCar *car = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([BNRCar class]) inManagedObjectContext:childContext];
+                     BNRCar *car = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([BNRCar class]) inManagedObjectContext:backgroundMOC];
                      car.make = carDict[@"make"];
                      car.model = carDict[@"model"];
                      car.year = [carDict[@"year"] integerValue];
@@ -94,20 +80,18 @@ typedef enum : NSUInteger {
                      car.rgbColor = [carDict[@"rgb_color"] integerValue];
                  }
                  
-                 NSError *saveError;
-                 BOOL success = [childContext save:&saveError];
-                 if (!success) {
-                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                         completionBlock(NO, saveError);
-                     }];
-                 }
-             }];
+                 return YES;
+             } error:&coreDataError];
              
-             [[NSNotificationCenter defaultCenter] removeObserver:observer];
-
-             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                 completionBlock(YES, nil);
-             }];
+             if (success) {
+                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                     completionBlock(YES, nil);
+                 }];
+             } else {
+                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                     completionBlock(NO, coreDataError);
+                 }];
+             }
              
          } else {
              [[NSOperationQueue mainQueue] addOperationWithBlock:^{
