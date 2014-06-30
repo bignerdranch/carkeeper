@@ -20,4 +20,6 @@
 
 + (BNRCar *)insertCarInManagedObjectContext:(NSManagedObjectContext *)moc;
 
++ (BNRCar *)insertCarInManagedObjectContext:(NSManagedObjectContext *)moc withDictionary:(NSDictionary *)carDict;
+
 @end

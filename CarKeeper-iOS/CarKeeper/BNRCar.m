@@ -22,4 +22,15 @@
     return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([BNRCar class]) inManagedObjectContext:moc];
 }
 
++ (BNRCar *)insertCarInManagedObjectContext:(NSManagedObjectContext *)moc withDictionary:(NSDictionary *)carDict
+{
+    BNRCar *car = [BNRCar insertCarInManagedObjectContext:moc];
+    car.make = carDict[@"make"];
+    car.model = carDict[@"model"];
+    car.year = [carDict[@"year"] integerValue];
+    car.nickname = carDict[@"nickname"];
+    car.rgbColor = [carDict[@"rgb_color"] integerValue];
+    return car;
+}
+
 @end
