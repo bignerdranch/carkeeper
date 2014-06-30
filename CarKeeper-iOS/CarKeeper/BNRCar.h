@@ -19,6 +19,7 @@
 @property (nonatomic) int16_t year;
 
 + (BNRCar *)insertCarInManagedObjectContext:(NSManagedObjectContext *)moc;
++ (BNRCar *)insertCarInManagedObjectContext:(NSManagedObjectContext *)moc withDictionary:(NSDictionary *)carDict;
 - (NSString *)userDescription;
 
 @end
