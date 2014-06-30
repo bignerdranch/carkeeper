@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		69C5CB38195931680007D392 /* BNRCarKeeperCoreDataStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C5CB37195931680007D392 /* BNRCarKeeperCoreDataStack.m */; };
 		69C5CB3B195935350007D392 /* BNRCarKeeperStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C5CB3A195935350007D392 /* BNRCarKeeperStore.m */; };
+		69C5CB3E1960EA460007D392 /* BNRCarKeeperCoreDataStackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C5CB3D1960EA460007D392 /* BNRCarKeeperCoreDataStackTests.m */; };
 		69EBBD3619557B6D00A1D2FA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EBBD3519557B6D00A1D2FA /* Foundation.framework */; };
 		69EBBD3819557B6D00A1D2FA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EBBD3719557B6D00A1D2FA /* CoreGraphics.framework */; };
 		69EBBD3A19557B6D00A1D2FA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EBBD3919557B6D00A1D2FA /* UIKit.framework */; };
@@ -27,7 +28,6 @@
 		69EBBD6219557B6D00A1D2FA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EBBD3919557B6D00A1D2FA /* UIKit.framework */; };
 		69EBBD6319557B6D00A1D2FA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EBBD3B19557B6D00A1D2FA /* CoreData.framework */; };
 		69EBBD6B19557B6E00A1D2FA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 69EBBD6919557B6E00A1D2FA /* InfoPlist.strings */; };
-		69EBBD6D19557B6E00A1D2FA /* CarKeeperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 69EBBD6C19557B6E00A1D2FA /* CarKeeperTests.m */; };
 		69EBBD7819557E8C00A1D2FA /* BNRCar.m in Sources */ = {isa = PBXBuildFile; fileRef = 69EBBD7719557E8C00A1D2FA /* BNRCar.m */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +46,7 @@
 		69C5CB37195931680007D392 /* BNRCarKeeperCoreDataStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNRCarKeeperCoreDataStack.m; sourceTree = "<group>"; };
 		69C5CB39195935350007D392 /* BNRCarKeeperStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNRCarKeeperStore.h; sourceTree = "<group>"; };
 		69C5CB3A195935350007D392 /* BNRCarKeeperStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNRCarKeeperStore.m; sourceTree = "<group>"; };
+		69C5CB3D1960EA460007D392 /* BNRCarKeeperCoreDataStackTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNRCarKeeperCoreDataStackTests.m; sourceTree = "<group>"; };
 		69EBBD3219557B6D00A1D2FA /* CarKeeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarKeeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69EBBD3519557B6D00A1D2FA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		69EBBD3719557B6D00A1D2FA /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -69,7 +70,6 @@
 		69EBBD5F19557B6D00A1D2FA /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		69EBBD6819557B6E00A1D2FA /* CarKeeperTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CarKeeperTests-Info.plist"; sourceTree = "<group>"; };
 		69EBBD6A19557B6E00A1D2FA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		69EBBD6C19557B6E00A1D2FA /* CarKeeperTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CarKeeperTests.m; sourceTree = "<group>"; };
 		69EBBD7619557E8C00A1D2FA /* BNRCar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNRCar.h; sourceTree = "<group>"; };
 		69EBBD7719557E8C00A1D2FA /* BNRCar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNRCar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -177,7 +177,7 @@
 		69EBBD6619557B6E00A1D2FA /* CarKeeperTests */ = {
 			isa = PBXGroup;
 			children = (
-				69EBBD6C19557B6E00A1D2FA /* CarKeeperTests.m */,
+				69C5CB3D1960EA460007D392 /* BNRCarKeeperCoreDataStackTests.m */,
 				69EBBD6719557B6E00A1D2FA /* Supporting Files */,
 			);
 			path = CarKeeperTests;
@@ -306,7 +306,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69EBBD6D19557B6E00A1D2FA /* CarKeeperTests.m in Sources */,
+				69C5CB3E1960EA460007D392 /* BNRCarKeeperCoreDataStackTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

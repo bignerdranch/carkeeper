@@ -10,7 +10,6 @@
 
 @interface BNRCarKeeperCoreDataStack ()
 
-@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 @end
@@ -18,8 +17,56 @@
 @implementation BNRCarKeeperCoreDataStack
 
 @synthesize managedObjectContext = _managedObjectContext;
-@synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
+
+- (instancetype)initWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)psc
+{
+    self = [super init];
+    if (self) {
+        _persistentStoreCoordinator = psc;
+    }
+    return self;
+}
+
+- (BOOL)performBlockOnBackgroundContext:(BOOL (^)(NSManagedObjectContext *backgroundMOC))backgroundBlock
+                                  error:(NSError **)error
+{
+    NSManagedObjectContext *childContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    childContext.parentContext = self.managedObjectContext;
+    
+    // listen for saves to save the main context
+    __block BOOL didMainMOCSave;
+    __block NSError *mainSaveError;
+    // this observer will be triggered synchronously on the main queue before the background save call returns
+    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:NSManagedObjectContextDidSaveNotification
+                                                                    object:childContext
+                                                                     queue:[NSOperationQueue mainQueue]
+                                                                usingBlock:^(NSNotification *note) {
+                                                                    didMainMOCSave = [self.managedObjectContext save:&mainSaveError];
+                                                                }];
+    
+    __block BOOL shouldBackgroundMOCSave, didBackgroundMOCSave;
+    __block NSError *backgroundSaveError;
+    [childContext performBlockAndWait:^{
+        shouldBackgroundMOCSave = backgroundBlock(childContext);
+        
+        if (shouldBackgroundMOCSave) {
+            didBackgroundMOCSave = [childContext save:&backgroundSaveError];
+        }
+    }];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:observer];
+
+    if (shouldBackgroundMOCSave && !didBackgroundMOCSave) {
+        *error = backgroundSaveError;
+        return NO;
+    } else if (shouldBackgroundMOCSave && !didMainMOCSave) {
+        *error = mainSaveError;
+        return NO;
+    } else {
+        return YES;
+    }
+}
 
 - (void)saveContext
 {
@@ -53,16 +100,12 @@
     return _managedObjectContext;
 }
 
-// Returns the managed object model for the application.
+// Returns a managed object model for the application.
 // If the model doesn't already exist, it is created from the application's model.
-- (NSManagedObjectModel *)managedObjectModel
++ (NSManagedObjectModel *)managedObjectModel
 {
-    if (_managedObjectModel != nil) {
-        return _managedObjectModel;
-    }
     NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"CarKeeper" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-    return _managedObjectModel;
+    return [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
 }
 
 // Returns the persistent store coordinator for the application.
@@ -72,46 +115,33 @@
     if (_persistentStoreCoordinator != nil) {
         return _persistentStoreCoordinator;
     }
-    
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"CarKeeper.sqlite"];
-    
-    NSError *error = nil;
-    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-         
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-         
-         Typical reasons for an error here include:
-         * The persistent store is not accessible;
-         * The schema for the persistent store is incompatible with current managed object model.
-         Check the error message to determine what the actual problem was.
-         
-         
-         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
-         
-         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
-         * Simply deleting the existing store:
-         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
-         
-         * Performing automatic lightweight migration by passing the following dictionary as the options parameter:
-         @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
-         
-         Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
-         
-         */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+    NSError *error;
+    _persistentStoreCoordinator = [[self class] newSQLitePersistentStoreCoordinatorWithError:&error];
+    if (!_persistentStoreCoordinator) {
+        NSLog(@"Error creating SQLite persistent store: %@", error);
         abort();
     }
-    
     return _persistentStoreCoordinator;
+}
+
++ (NSPersistentStoreCoordinator *)newSQLitePersistentStoreCoordinatorWithError:(NSError **)error;
+{
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"CarKeeper.sqlite"];
+    
+    NSPersistentStoreCoordinator *psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+    BOOL success = [psc addPersistentStoreWithType:NSSQLiteStoreType
+                           configuration:nil
+                                     URL:storeURL
+                                 options:@{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
+                                   error:error];
+    
+    return success ? psc : nil;
 }
 
 #pragma mark - Application's Documents directory
 
 // Returns the URL to the application's Documents directory.
-- (NSURL *)applicationDocumentsDirectory
++ (NSURL *)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
