@@ -72,7 +72,7 @@ typedef enum : NSUInteger {
              NSError *coreDataError;
              BOOL success = [self.coreDataStack performBlockOnBackgroundContext:^BOOL(NSManagedObjectContext *backgroundMOC) {
                  for (NSDictionary *carDict in carDicts) {
-                     BNRCar *car = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([BNRCar class]) inManagedObjectContext:backgroundMOC];
+                     BNRCar *car = [BNRCar insertCarInManagedObjectContext:backgroundMOC];
                      car.make = carDict[@"make"];
                      car.model = carDict[@"model"];
                      car.year = [carDict[@"year"] integerValue];

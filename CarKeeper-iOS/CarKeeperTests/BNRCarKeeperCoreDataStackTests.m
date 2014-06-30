@@ -100,7 +100,7 @@
 {
     NSError *error;
     BOOL success = [self.stack performBlockOnBackgroundContext:^BOOL(NSManagedObjectContext *backgroundMOC) {
-        BNRCar *car = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([BNRCar class]) inManagedObjectContext:backgroundMOC];
+        BNRCar *car = [BNRCar insertCarInManagedObjectContext:backgroundMOC];
         car.nickname = @"Big Bertha";
         car.make = @"Ford";
         car.model = @"Darlington";
