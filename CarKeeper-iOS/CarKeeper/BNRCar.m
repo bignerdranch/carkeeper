@@ -17,6 +17,11 @@
 @dynamic rgbColor;
 @dynamic year;
 
++ (BNRCar *)insertCarInManagedObjectContext:(NSManagedObjectContext *)moc
+{
+    return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([BNRCar class]) inManagedObjectContext:moc];
+}
+
 - (NSString *)userDescription
 {
     NSMutableString *carText = [[NSMutableString alloc] init];

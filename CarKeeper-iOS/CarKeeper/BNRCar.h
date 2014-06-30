@@ -18,6 +18,7 @@
 @property (nonatomic) int64_t rgbColor;
 @property (nonatomic) int16_t year;
 
++ (BNRCar *)insertCarInManagedObjectContext:(NSManagedObjectContext *)moc;
 - (NSString *)userDescription;
 
 @end
