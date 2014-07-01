@@ -66,8 +66,7 @@
 - (void)insertNewObject:(id)sender
 {
     NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
-    NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
-    BNRCar *car = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:context];
+    BNRCar *car = [BNRCar insertCarInManagedObjectContext:context];
     
     car.nickname = @"Old Faithful";
     car.make = @"Ford";
