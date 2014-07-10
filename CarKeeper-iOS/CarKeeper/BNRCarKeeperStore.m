@@ -28,6 +28,23 @@
     return self;
 }
 
+- (BNRCar *)insertDefaultNewCar:(NSError **)error
+{
+    BNRCar *car = [BNRCar insertCarInManagedObjectContext:self.coreDataStack.managedObjectContext];
+    
+    car.nickname = @"Old Faithful";
+    car.make = @"Ford";
+    car.model = @"F-150";
+    car.year = 1994;
+    car.rgbColor = 0xffffff;
+    
+    // Save the context.
+    if (![self.coreDataStack.managedObjectContext save:error]) {
+        return nil;
+    }
+    return car;
+}
+
 - (NSFetchedResultsController *)fetchCars:(NSError **)error
 {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
