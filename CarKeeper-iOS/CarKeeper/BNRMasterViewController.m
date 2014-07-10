@@ -12,10 +12,14 @@
 
 #import "BNRCar.h"
 #import "BNRCarPresenter.h"
+#import "BNRCarListResultsController.h"
 
 @interface BNRMasterViewController ()
 
 @property (nonatomic) BOOL isDataLoaded;
+
+@property (nonatomic, strong) NSFetchedResultsController *carsFetchedResultsController;
+@property (nonatomic, strong) BNRCarListResultsController *carListResultsController;
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 @end
@@ -40,6 +44,16 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
     self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (BNRDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    
+    // set up the fetched results controller and the car list results controller
+    NSError *error;
+    self.carsFetchedResultsController = [self.store fetchCars:&error];
+    if (self.carsFetchedResultsController) {
+        self.carsFetchedResultsController.delegate = self;
+        self.carListResultsController = [[BNRCarListResultsController alloc] initWithFetchedResultsController:self.carsFetchedResultsController];
+    } else {
+        NSLog(@"Error fetching cars: %@", error);
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -65,7 +79,7 @@
 
 - (void)insertNewObject:(id)sender
 {
-    NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+    NSManagedObjectContext *context = [self.carsFetchedResultsController managedObjectContext];
     BNRCar *car = [BNRCar insertCarInManagedObjectContext:context];
     
     car.nickname = @"Old Faithful";
@@ -88,13 +102,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [[self.fetchedResultsController sections] count];
+    return [self.carListResultsController numberOfSections];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    id <NSFetchedResultsSectionInfo> sectionInfo = [self.fetchedResultsController sections][section];
-    return [sectionInfo numberOfObjects];
+    return [self.carListResultsController numberOfRowsInSection:section];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -113,11 +126,8 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
-        [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
-        
         NSError *error = nil;
-        if (![context save:&error]) {
+        if (![self.carListResultsController deleteCarAtIndexPath:indexPath error:&error]) {
              // Replace this implementation with code to handle the error appropriately.
              // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
@@ -135,7 +145,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        BNRCar *car = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+        BNRCar *car = [self.carListResultsController carAtIndexPath:indexPath];
         self.detailViewController.detailItem = car;
     }
 }
@@ -144,29 +154,12 @@
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        BNRCar *car = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+        BNRCar *car = [self.carListResultsController carAtIndexPath:indexPath];
         [[segue destinationViewController] setDetailItem:car];
     }
 }
 
 #pragma mark - Fetched results controller
-
-- (NSFetchedResultsController *)fetchedResultsController
-{
-    if (_fetchedResultsController != nil) {
-        return _fetchedResultsController;
-    }
-    
-    NSError *error;
-    self.fetchedResultsController = [self.store fetchCars:&error];
-    if (_fetchedResultsController) {
-        _fetchedResultsController.delegate = self;
-    } else {
-        NSLog(@"Error fetching cars: %@", error);
-    }
-    
-    return _fetchedResultsController;
-}    
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller
 {
@@ -230,7 +223,7 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    BNRCar *car = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    BNRCar *car = [self.carListResultsController carAtIndexPath:indexPath];
     BNRCarPresenter *presenter = [[BNRCarPresenter alloc] initWithCar:car];
     
     cell.textLabel.text = presenter.description;

@@ -17,7 +17,6 @@
 
 @property (strong, nonatomic) BNRDetailViewController *detailViewController;
 
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) BNRCarKeeperStore *store;
 
 @end
