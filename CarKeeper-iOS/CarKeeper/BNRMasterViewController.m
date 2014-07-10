@@ -81,20 +81,11 @@
 
 - (void)insertNewObject:(id)sender
 {
-    NSManagedObjectContext *context = [self.carsFetchedResultsController managedObjectContext];
-    BNRCar *car = [BNRCar insertCarInManagedObjectContext:context];
-    
-    car.nickname = @"Old Faithful";
-    car.make = @"Ford";
-    car.model = @"F-150";
-    car.year = 1994;
-    car.rgbColor = 0xffffff;
-    
-    // Save the context.
-    NSError *error = nil;
-    if (![context save:&error]) {
-         // Replace this implementation with code to handle the error appropriately.
-         // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
+    NSError *error;
+    BNRCar *newCar = [self.store insertDefaultNewCar:&error];
+    if (!newCar) {
+        // Replace this implementation with code to handle the error appropriately.
+        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
