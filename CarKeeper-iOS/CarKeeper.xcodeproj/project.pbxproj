@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		69008D1D196E459D001A8071 /* BNRTableViewFetchedResultsControllerDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 69008D1C196E459D001A8071 /* BNRTableViewFetchedResultsControllerDelegate.m */; };
 		69C5CB38195931680007D392 /* BNRCarKeeperCoreDataStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C5CB37195931680007D392 /* BNRCarKeeperCoreDataStack.m */; };
 		69C5CB3B195935350007D392 /* BNRCarKeeperStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C5CB3A195935350007D392 /* BNRCarKeeperStore.m */; };
 		69C5CB3E1960EA460007D392 /* BNRCarKeeperCoreDataStackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C5CB3D1960EA460007D392 /* BNRCarKeeperCoreDataStackTests.m */; };
@@ -44,6 +45,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		69008D1B196E459D001A8071 /* BNRTableViewFetchedResultsControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNRTableViewFetchedResultsControllerDelegate.h; sourceTree = "<group>"; };
+		69008D1C196E459D001A8071 /* BNRTableViewFetchedResultsControllerDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNRTableViewFetchedResultsControllerDelegate.m; sourceTree = "<group>"; };
 		69C5CB36195931680007D392 /* BNRCarKeeperCoreDataStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNRCarKeeperCoreDataStack.h; sourceTree = "<group>"; };
 		69C5CB37195931680007D392 /* BNRCarKeeperCoreDataStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNRCarKeeperCoreDataStack.m; sourceTree = "<group>"; };
 		69C5CB39195935350007D392 /* BNRCarKeeperStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNRCarKeeperStore.h; sourceTree = "<group>"; };
@@ -165,6 +168,8 @@
 				69EBBD5619557B6D00A1D2FA /* BNRDetailViewController.m */,
 				69C5CB43196CE25A0007D392 /* BNRCarListResultsController.h */,
 				69C5CB44196CE25A0007D392 /* BNRCarListResultsController.m */,
+				69008D1B196E459D001A8071 /* BNRTableViewFetchedResultsControllerDelegate.h */,
+				69008D1C196E459D001A8071 /* BNRTableViewFetchedResultsControllerDelegate.m */,
 				69C5CB3C195935480007D392 /* Store */,
 				69EBBD5819557B6D00A1D2FA /* Images.xcassets */,
 				69EBBD7619557E8C00A1D2FA /* BNRCar.h */,
@@ -305,6 +310,7 @@
 			files = (
 				69EBBD5119557B6D00A1D2FA /* CarKeeper.xcdatamodeld in Sources */,
 				69EBBD5419557B6D00A1D2FA /* BNRMasterViewController.m in Sources */,
+				69008D1D196E459D001A8071 /* BNRTableViewFetchedResultsControllerDelegate.m in Sources */,
 				69EBBD4419557B6D00A1D2FA /* main.m in Sources */,
 				69EBBD7819557E8C00A1D2FA /* BNRCar.m in Sources */,
 				69C5CB38195931680007D392 /* BNRCarKeeperCoreDataStack.m in Sources */,

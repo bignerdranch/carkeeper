@@ -13,7 +13,7 @@
 
 #import "BNRCarKeeperStore.h"
 
-@interface BNRMasterViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+@interface BNRMasterViewController : UITableViewController
 
 @property (strong, nonatomic) BNRDetailViewController *detailViewController;
 
