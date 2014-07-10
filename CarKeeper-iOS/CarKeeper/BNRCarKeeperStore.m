@@ -76,25 +76,36 @@
     NSURL * carsURL = [NSURL URLWithString:@"http://localhost:3000/cars.json"];
     [[[NSURLSession sharedSession] dataTaskWithURL:carsURL
                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                     if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                                         NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse *)response;
-                                         BNRCarsResponseHandler *handler = [[BNRCarsResponseHandler alloc] initWithCoreDataStack:self.coreDataStack];
-                                         NSError *handlerError;
-                                         BOOL success = [handler handleHTTPResponse:urlResponse withData:data error:&handlerError];
-                                         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                                             completionBlock(success, handlerError);
-                                         }];
-                                     } else {
-                                         if (response) {
-                                             NSLog(@"Bad response when retrieving cars: %@", response);
-                                             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                                                 completionBlock(NO, [NSError errorWithDomain:BNRCarKeeperErrorDomain
-                                                                                         code:BNRCarKeeperErrorCodeBadResponse
-                                                                                     userInfo:@{ @"Response" : response}]);
-                                             }];
-                                         }
-                                     }
+                                     [self handleCarsResponseCompletionWithData:data
+                                                                    urlResponse:response
+                                                                          error:error
+                                                       mainQueueCompletionBlock:completionBlock];
     }] resume];
+}
+
+- (void)handleCarsResponseCompletionWithData:(NSData *)data
+                                 urlResponse:(NSURLResponse *)response
+                                       error:(NSError *)error
+                    mainQueueCompletionBlock:(BNRCarKeeperStoreCarsCompletionBlock)completionBlock
+{
+    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse *)response;
+        BNRCarsResponseHandler *handler = [[BNRCarsResponseHandler alloc] initWithCoreDataStack:self.coreDataStack];
+        NSError *handlerError;
+        BOOL success = [handler handleHTTPResponse:urlResponse withData:data error:&handlerError];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            completionBlock(success, handlerError);
+        }];
+    } else {
+        if (response) {
+            NSLog(@"Bad response when retrieving cars: %@", response);
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                completionBlock(NO, [NSError errorWithDomain:BNRCarKeeperErrorDomain
+                                                        code:BNRCarKeeperErrorCodeBadResponse
+                                                    userInfo:@{ @"Response" : response}]);
+            }];
+        }
+    }
 }
 
 @end
