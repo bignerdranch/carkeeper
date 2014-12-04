@@ -11,6 +11,7 @@
 #import "BNRDetailViewController.h"
 
 #import "BNRCar.h"
+#import "BNRCarPresenter.h"
 
 @interface BNRMasterViewController ()
 
@@ -301,19 +302,12 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     BNRCar *car = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    NSMutableString *carText = [[NSMutableString alloc] init];
-    [carText appendFormat:@"%d %@ %@", car.year, car.make, car.model];
-    if (car.nickname.length) {
-        [carText appendFormat:@", \"%@\"", car.nickname];
-    }
-    cell.textLabel.text = carText;
+    BNRCarPresenter *presenter = [[BNRCarPresenter alloc] initWithCar:car];
+    
+    cell.textLabel.text = presenter.description;
     
     // configure the background color
-    int64_t rgbColor = car.rgbColor;
-    int blue = rgbColor & 0xFF;
-    int green = (rgbColor >> 8) & 0xFF;
-    int red = (rgbColor >> 16) & 0xFF;
-    UIColor *color = [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:0.5];
+    UIColor *color = [presenter.color colorWithAlphaComponent:0.5];
     cell.backgroundColor = color;
 }
 
