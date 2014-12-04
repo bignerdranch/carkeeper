@@ -307,6 +307,14 @@
         [carText appendFormat:@", \"%@\"", car.nickname];
     }
     cell.textLabel.text = carText;
+    
+    // configure the background color
+    int64_t rgbColor = car.rgbColor;
+    int blue = rgbColor & 0xFF;
+    int green = (rgbColor >> 8) & 0xFF;
+    int red = (rgbColor >> 16) & 0xFF;
+    UIColor *color = [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:0.5];
+    cell.backgroundColor = color;
 }
 
 @end
