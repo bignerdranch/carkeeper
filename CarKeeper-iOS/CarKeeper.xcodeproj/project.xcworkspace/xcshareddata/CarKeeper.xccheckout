@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>AA01460A-A1A2-4D6B-BB02-09269AB40E00</string>
+	<key>IDESourceControlProjectName</key>
+	<string>CarKeeper</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>DE28A203870D6F1B104758C3BF378B07D6780A17</key>
+		<string>github.com:bignerdranch/carkeeper.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>CarKeeper-iOS/CarKeeper.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>DE28A203870D6F1B104758C3BF378B07D6780A17</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:bignerdranch/carkeeper.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>DE28A203870D6F1B104758C3BF378B07D6780A17</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>DE28A203870D6F1B104758C3BF378B07D6780A17</string>
+			<key>IDESourceControlWCCName</key>
+			<string>carkeeper</string>
+		</dict>
+	</array>
+</dict>
+</plist>
