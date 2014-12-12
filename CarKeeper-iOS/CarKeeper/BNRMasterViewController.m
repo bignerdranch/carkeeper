@@ -11,7 +11,6 @@
 #import "BNRDetailViewController.h"
 
 #import "BNRCar.h"
-#import "BNRCarPresenter.h"
 #import "BNRCarListResultsController.h"
 #import "BNRTableViewFetchedResultsControllerDelegate.h"
 
@@ -23,7 +22,6 @@
 @property (nonatomic, strong) BNRTableViewFetchedResultsControllerDelegate *tableViewFRCDelegate;
 @property (nonatomic, strong) BNRCarListResultsController *carListResultsController;
 
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 @end
 
 @implementation BNRMasterViewController
@@ -54,6 +52,7 @@
         self.tableViewFRCDelegate = [[BNRTableViewFetchedResultsControllerDelegate alloc] initWithTableView:self.tableView];
         self.carsFetchedResultsController.delegate = self.tableViewFRCDelegate;
         self.carListResultsController = [[BNRCarListResultsController alloc] initWithFetchedResultsController:self.carsFetchedResultsController];
+        self.tableView.dataSource = self.carListResultsController;
     } else {
         NSLog(@"Error fetching cars: %@", error);
     }
@@ -94,48 +93,6 @@
 
 #pragma mark - Table View
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return [self.carListResultsController numberOfSections];
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [self.carListResultsController numberOfRowsInSection:section];
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    [self configureCell:cell atIndexPath:indexPath];
-    return cell;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSError *error = nil;
-        if (![self.carListResultsController deleteCarAtIndexPath:indexPath error:&error]) {
-             // Replace this implementation with code to handle the error appropriately.
-             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-    }   
-}
-
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // The table view should not be re-orderable.
-    return NO;
-}
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
@@ -153,18 +110,5 @@
     }
 }
 
-#pragma mark - Fetched results controller
-
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    BNRCar *car = [self.carListResultsController carAtIndexPath:indexPath];
-    BNRCarPresenter *presenter = [[BNRCarPresenter alloc] initWithCar:car];
-    
-    cell.textLabel.text = presenter.description;
-    
-    // configure the background color
-    UIColor *color = [presenter.color colorWithAlphaComponent:0.5];
-    cell.backgroundColor = color;
-}
 
 @end

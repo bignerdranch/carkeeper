@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Big Nerd Ranch. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "BNRCar.h"
 
-@interface BNRCarListResultsController : NSObject
+@interface BNRCarListResultsController : NSObject <UITableViewDataSource>
 
 - (instancetype)initWithFetchedResultsController:(NSFetchedResultsController *)frc;
 
